@@ -1,0 +1,79 @@
+//Austin Zimmers
+//very basic alarm clock
+
+//Based on "https://www.instructables.com/id/TESTED-Timekeeping-on-ESP8266-Arduino-Uno-WITHOUT-/"
+
+unsigned long timeNow = 0;
+
+unsigned long timeLast = 0;
+
+//Time start Settings:
+int startingHour = 12;
+int seconds = 0;
+int minutes = 33;
+int hours = startingHour;
+int days = 0;
+
+//Set alarm time! This is for 8:30 am.
+int alarmSetMinute = 30;
+int alarmSetHour = 8;
+
+int v = 0; // for button value
+
+
+void setup() { // put your setup code here, to run once:
+Serial.begin(9600); 
+
+//NOTE: piezo buzzer connects to pin 8 in this code!
+pinMode(7, INPUT); //For Push Button
+
+}
+
+
+
+void loop() { // put your main code here, to run repeatedly:
+
+timeNow = millis()/1000; // the number of milliseconds that have passed
+seconds = timeNow - timeLast;
+//the number of seconds that have passed since the last time 60 seconds was reached.
+
+if (seconds == 60) {
+timeLast = timeNow;
+minutes = minutes + 1; }
+//if one minute has passed, start counting milliseconds from zero again and add one minute to the clock.
+
+if (minutes == 60){
+minutes = 0;
+hours = hours + 1; }
+
+// if one hour has passed, start counting minutes from zero and add one hour to the clock
+if (hours == 24){
+hours = 0;
+days = days + 1;
+}
+
+
+//let the sketch know that a new day has started for what concerns correction
+Serial.print("The time is: ");
+Serial.print(days);
+Serial.print(":");
+Serial.print(hours);
+Serial.print(":");
+Serial.print(minutes);
+Serial.print(":");
+Serial.println(seconds);
+
+
+// ADD ALARM FUNCTIONALITY 
+
+if(hours == alarmSetHour){
+  if(minutes == alarmSetMinute){ //if hours and minutes are equal - sound buzzer
+      tone(8, 1000);
+  }
+}
+v = digitalRead(7);
+if(v == HIGH)
+  noTone(8);//turn off piezo if button is pressed
+
+
+}
